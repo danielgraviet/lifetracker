@@ -4,6 +4,10 @@ dockerfilePath = "Dockerfile"
 
 [deploy]
 # Default service is the API — override startCommand in Railway UI for the bot service
-startCommand = "uvicorn api.main:app --host 0.0.0.0 --port $PORT"
+# Start command is controlled by the SERVICE env var set per-service in Railway's Variables tab
+# API service: SERVICE=api (or omit), Bot service: SERVICE=bot
 restartPolicyType = "ON_FAILURE"
 restartPolicyMaxRetries = 3
+
+# Runs before the app starts on every deploy — creates/updates tables
+releaseCommand = "alembic upgrade head"
