@@ -24,4 +24,4 @@ RUN pip install --no-cache-dir --no-deps .
 ENV PYTHONUNBUFFERED=1
 
 # Default to running the API; override per-service in Railway
-CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD uvicorn api.main:app --host 0.0.0.0 --port ${PORT:-8000}
