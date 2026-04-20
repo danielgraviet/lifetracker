@@ -8,7 +8,12 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 from bot import config
 from core.models import Base, Entry, Memo, TagVocabulary
 
-engine = create_async_engine(config.DATABASE_URL, echo=False)
+# Railway (and many hosts) provide postgresql:// but asyncpg requires postgresql+asyncpg://
+_db_url = config.DATABASE_URL
+if _db_url.startswith("postgresql://") or _db_url.startswith("postgres://"):
+    _db_url = _db_url.replace("://", "+asyncpg://", 1)
+
+engine = create_async_engine(_db_url, echo=False)
 AsyncSessionLocal = async_sessionmaker(engine, expire_on_commit=False)
 
 
