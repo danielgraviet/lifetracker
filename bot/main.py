@@ -59,15 +59,30 @@ def _format_entry_summary(entries: list[dict]) -> str:
 # Command handlers
 # ---------------------------------------------------------------------------
 
+HELP_TEXT = (
+    "👋 *LifeTracker — How to use*\n\n"
+    "*Logging your day:*\n"
+    "• Send a voice memo (30s–5min) about what you did, liked, or disliked\n"
+    "• Or just type a message — no voice needed\n"
+    "• I'll transcribe and parse it into structured entries automatically\n\n"
+    "*Correcting a bad parse:*\n"
+    "• Reply with `fix: <instruction>` — e.g. `fix: the meeting was actually fine, mark it mixed`\n\n"
+    "*Commands:*\n"
+    "/start — confirm the bot is running\n"
+    "/today — get today's check-in nudge\n"
+    "/history — show your last 5 entries\n"
+    "/stats — open the dashboard\n"
+    "/help — show this message"
+)
+
+
 async def cmd_start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if not _is_authorized(update):
         return
     await update.message.reply_text(
-        "👋 Vibe Check is running! Send me a voice memo or text message about your day "
-        "and I'll log it for you.\n\nCommands:\n"
-        "/today — manually trigger today's check-in\n"
-        "/history — show last 5 entries\n"
-        "/stats — quick stats"
+        "👋 LifeTracker is running! Send me a voice memo or text about your day and I'll log it.\n\n"
+        "Type /help to see all commands.",
+        parse_mode="Markdown",
     )
 
 
@@ -103,14 +118,15 @@ async def cmd_history(update: Update, context: ContextTypes.DEFAULT_TYPE) -> Non
 async def cmd_stats(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     if not _is_authorized(update):
         return
-    from datetime import date, timedelta
-    week_ago = date.today() - timedelta(days=7)
-    # Simple counts from tag vocabulary
-    tags = await database.get_tag_vocabulary()
     await update.message.reply_text(
-        f"📊 Tag vocabulary: {len(tags)} unique tags\n"
-        f"Use the dashboard for full analytics."
+        "📊 Open your dashboard here:\nhttps://lifetracker-production-5e84.up.railway.app/"
     )
+
+
+async def cmd_help(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    if not _is_authorized(update):
+        return
+    await update.message.reply_text(HELP_TEXT, parse_mode="Markdown")
 
 
 # ---------------------------------------------------------------------------
@@ -308,6 +324,7 @@ def build_app():
 
     app.add_handler(MessageHandler(filters.ALL, debug_all), group=-1)  # group -1 = runs first, non-blocking
     app.add_handler(CommandHandler("start", cmd_start))
+    app.add_handler(CommandHandler("help", cmd_help))
     app.add_handler(CommandHandler("today", cmd_today))
     app.add_handler(CommandHandler("history", cmd_history))
     app.add_handler(CommandHandler("stats", cmd_stats))
@@ -338,7 +355,7 @@ async def _post_init(app) -> None:
 def main():
     app = build_app()
     app.post_init = _post_init
-    logger.info("Starting Vibe Check bot...")
+    logger.info("Starting LifeTracker bot...")
     app.run_polling(allowed_updates=["message", "edited_message"])
 
 

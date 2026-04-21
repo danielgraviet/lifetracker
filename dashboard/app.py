@@ -61,7 +61,7 @@ def load_tags() -> pd.DataFrame:
 # Sidebar filters
 # ---------------------------------------------------------------------------
 
-st.sidebar.title("✨ Vibe Check")
+st.sidebar.title("LifeTracker")
 st.sidebar.markdown("---")
 
 all_entries = load_entries()

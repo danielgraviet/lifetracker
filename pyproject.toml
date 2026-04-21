@@ -1,7 +1,7 @@
 [project]
 name = "lifetracker"
 version = "0.1.0"
-description = "Vibe Check — Personal Like/Dislike Activity Tracker"
+description = "LifeTracker — Personal Like/Dislike Activity Tracker"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
