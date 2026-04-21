@@ -8,7 +8,7 @@ from sqlalchemy import create_engine
 
 load_dotenv()
 
-st.set_page_config(page_title="Vibe Check", page_icon="✨", layout="wide")
+st.set_page_config(page_title="LifeTracker Dashboard", layout="wide")
 
 SENTIMENT_COLORS = {"liked": "#4ade80", "disliked": "#f87171", "mixed": "#facc15"}
 ENERGY_COLORS = {"energizing": "#60a5fa", "draining": "#f97316", "neutral": "#94a3b8"}
@@ -21,6 +21,8 @@ def _db_url() -> str:
             url = "postgresql://" + url[len(prefix):]
     if url.startswith("postgres://"):
         url = "postgresql://" + url[len("postgres://"):]
+    # psycopg2 uses sslmode=require, not ssl=require
+    url = url.replace("?ssl=require", "?sslmode=require")
     return url
 
 
