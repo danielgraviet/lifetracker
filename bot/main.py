@@ -125,10 +125,16 @@ async def handle_voice(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     await update.message.reply_text("🎙️ Got it! Transcribing your memo...")
 
     voice = update.message.voice
-    file = await context.bot.get_file(voice.file_id)
-    audio_bytes = await file.download_as_bytearray()
-
-    transcript = await transcriber.transcribe(bytes(audio_bytes), duration=voice.duration)
+    try:
+        file = await context.bot.get_file(voice.file_id)
+        audio_bytes = await file.download_as_bytearray()
+        transcript = await transcriber.transcribe(bytes(audio_bytes), duration=voice.duration)
+    except Exception as exc:
+        logger.exception("Transcription failed")
+        await update.message.reply_text(
+            f"⚠️ Transcription failed: {exc}\n\nPlease try again."
+        )
+        return
 
     if not transcript:
         await update.message.reply_text(

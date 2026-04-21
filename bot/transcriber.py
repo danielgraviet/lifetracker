@@ -5,7 +5,8 @@ from bot import config
 
 async def transcribe(audio_bytes: bytes, duration: int) -> str:
     """Send audio bytes to Whisper API and return the transcript text."""
-    async with httpx.AsyncClient(timeout=60.0) as client:
+    timeout = max(120.0, duration * 2)
+    async with httpx.AsyncClient(timeout=timeout) as client:
         response = await client.post(
             "https://api.openai.com/v1/audio/transcriptions",
             headers={"Authorization": f"Bearer {config.OPENAI_API_KEY}"},
