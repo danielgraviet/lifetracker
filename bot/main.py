@@ -160,12 +160,17 @@ async def handle_voice(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 
     entry_date = _get_user_local_date()
 
-    memo = await database.create_memo(
-        telegram_file_id=voice.file_id,
-        transcript=transcript,
-        duration_seconds=voice.duration,
-        date=entry_date,
-    )
+    try:
+        memo = await database.create_memo(
+            telegram_file_id=voice.file_id,
+            transcript=transcript,
+            duration_seconds=voice.duration,
+            date=entry_date,
+        )
+    except Exception as exc:
+        logger.exception("Failed to save memo to database")
+        await update.message.reply_text(f"⚠️ Couldn't save your memo: {exc}\n\nPlease try again.")
+        return
 
     await update.message.reply_text("📝 Transcribed! Parsing activities...")
 

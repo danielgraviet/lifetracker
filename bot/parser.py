@@ -1,3 +1,4 @@
+import asyncio
 import json
 import logging
 import re
@@ -59,11 +60,14 @@ async def parse_transcript(transcript: str, entry_date: date) -> list[dict]:
     client = anthropic.AsyncAnthropic(api_key=config.ANTHROPIC_API_KEY)
 
     async def _call(messages: list[dict]) -> str:
-        message = await client.messages.create(
-            model="claude-sonnet-4-6",
-            max_tokens=2048,
-            system=system_prompt,
-            messages=messages,
+        message = await asyncio.wait_for(
+            client.messages.create(
+                model="claude-sonnet-4-6",
+                max_tokens=2048,
+                system=system_prompt,
+                messages=messages,
+            ),
+            timeout=60.0,
         )
         return message.content[0].text
 
