@@ -1,4 +1,4 @@
-# lifetracker# Vibe Check — Personal Like/Dislike Activity Tracker
+# lifetracker
 
 A personal life-logging system that uses a **Telegram bot** to collect daily voice memos, an **LLM** to parse them into structured activity entries, and a **web dashboard** to surface patterns over time. The goal: understand what energizes you and what drains you, so you can make better life and career decisions.
 
